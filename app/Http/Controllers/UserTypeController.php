@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\UserType;
+use Illuminate\Http\Request;
 use App\Http\Resources\UserTypeResource;
 use App\Http\Requests\UserTypeCreateRequest;
 use App\Http\Requests\UserTypeUpdateRequest;
@@ -36,7 +37,13 @@ class UserTypeController extends Controller
      */
     public function store(UserTypeCreateRequest $request)
     {
-        $userType = UserType::create($request->validated());
+        $userType = new UserType();
+
+        $userType->name = $request->name;
+        $userType->description = $request->description;
+        $userType->is_active = $request->is_active;
+
+        $userType->save();
 
         return response()->json([
             'status' => 'success',
@@ -68,9 +75,15 @@ class UserTypeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UserTypeUpdateRequest $request, UserType $userType)
+    public function update(UserTypeUpdateRequest $request, $id)
     {
-        $userType->update($request->validated());
+        $userType = UserType::find($id);
+
+        $userType->name = $request->name;
+        $userType->description = $request->description;
+        $userType->is_active = $request->is_active;
+
+        $userType->update();
 
         return response()->json([
             'status' => 'success',
@@ -82,8 +95,10 @@ class UserTypeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(UserType $userType)
+    public function destroy($id)
     {
+        $userType = UserType::find($id);
+
         $userType->delete();
 
         return response()->json([

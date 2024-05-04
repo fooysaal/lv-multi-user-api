@@ -22,9 +22,9 @@ class UserTypeUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "name" => "required|string|unique:user_types,name," . $this->id,
+            "name" => "required|unique:user_types,name," . $this->id,
             "description" => "string",
-            "is_active" => "required|boolean",
+            "is_active" => "numeric|in:0,1",
         ];
     }
 }
