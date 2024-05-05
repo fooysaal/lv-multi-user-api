@@ -55,8 +55,10 @@ class UserTypeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(UserType $userType)
+    public function show($id)
     {
+        $userType = UserType::findorFail($id);
+
         return response()->json([
             'status' => 'success',
             'message' => 'User Type retrieved successfully',
@@ -67,7 +69,7 @@ class UserTypeController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(UserType $userType)
+    public function edit($id)
     {
         //
     }
@@ -77,7 +79,7 @@ class UserTypeController extends Controller
      */
     public function update(UserTypeUpdateRequest $request, $id)
     {
-        $userType = UserType::find($id);
+        $userType = UserType::findorFail($id);
 
         $userType->name = $request->name;
         $userType->description = $request->description;
@@ -97,7 +99,7 @@ class UserTypeController extends Controller
      */
     public function destroy($id)
     {
-        $userType = UserType::find($id);
+        $userType = UserType::findorFail($id);
 
         $userType->delete();
 
@@ -110,8 +112,9 @@ class UserTypeController extends Controller
     /**
      * Restore the specified resource from storage.
      */
-    public function restore($id){
-        $userType = UserType::withTrashed()->find($id);
+    public function restore($id)
+    {
+        $userType = UserType::withTrashed()->findorFail($id);
         $userType->restore();
 
         return response()->json([
@@ -124,8 +127,9 @@ class UserTypeController extends Controller
     /**
      * Remove the specified resource from storage permanently.
      */
-    public function forceDelete($id){
-        $userType = UserType::withTrashed()->find($id);
+    public function forceDelete($id)
+    {
+        $userType = UserType::withTrashed()->findorFail($id);
         $userType->forceDelete();
 
         return response()->json([
