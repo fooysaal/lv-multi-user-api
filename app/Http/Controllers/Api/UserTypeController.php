@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Models\UserType;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use App\Http\Resources\UserTypeResource;
 use App\Http\Requests\UserTypeCreateRequest;
 use App\Http\Requests\UserTypeUpdateRequest;

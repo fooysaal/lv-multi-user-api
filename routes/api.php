@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserTypeController;
+use App\Http\Controllers\Api\UserTypeController;
 use App\Http\Controllers\Api\Auth\AuthController;
 
 // Route::get('/user', function (Request $request) {
