@@ -7,7 +7,12 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>
+        @hasSection('title')
+            @yield('title') |
+        @endif
+        {{ config('app.name', 'Laravel') }}
+    </title>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
@@ -30,7 +35,19 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
-
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('home') }}">{{ __('Home') }}</a>
+                        </li>
+                    @if(Auth::user()->user_type_id == 1)
+                        <li class="nav-item">
+                            {{-- register user --}}
+                            <a class="nav-link" href="{{ route('register-user') }}">{{ __('Register User') }}</a>
+                        </li>
+                        <li class="nav-item">
+                            {{-- user type --}}
+                            <a class="nav-link" href="{{ route('user-types') }}">{{ __('User Type') }}</a>
+                        </li>
+                    @endif
                     </ul>
 
                     <!-- Right Side Of Navbar -->
@@ -42,19 +59,23 @@
                                     <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
                                 </li>
                             @endif
-
-                            @if (Route::has('register'))
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
-                                </li>
-                            @endif
                         @else
+                            {{-- add a logo --}}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('home') }}">
+                                    <img src="https://cdn.iconscout.com/icon/free/png-256/free-avatar-375-456327.png" alt="profile image" class="img-fluid" style="width: 30px; height: 30px; border-radius: 50%;">
+                                </a>
+                            </li>
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    {{ Auth::user()->name }}
+                                    {{ Auth::user()->username }}
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                    {{-- add a profile --}}
+                                    <a class="dropdown-item" href="{{ route('profile') }}">
+                                        {{ __('Profile') }}
+                                    </a>
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
@@ -71,7 +92,6 @@
                 </div>
             </div>
         </nav>
-
         <main class="py-4">
             @yield('content')
         </main>
