@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\UserTypeController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -9,4 +11,20 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+// disable registration
+Auth::routes(['register' => false]);
+
+Route::get('/home', [HomeController::class, 'index'])->name('home');
+
+Route::get('/profile', [HomeController::class, 'profile'])->name('profile');
+
+Route::group(['middleware' => 'auth'], function () {
+    Route::get('/register-user', [HomeController::class, 'registerUser'])->name('register-user');
+
+    Route::get('/user-types', [UserTypeController::class, 'index'])->name('user-types');
+    Route::get('/user-types/create', [UserTypeController::class, 'create'])->name('user-types.create');
+    Route::post('/user-types', [UserTypeController::class, 'store'])->name('user-types.store');
+    Route::get('/user-types/{id}/edit', [UserTypeController::class, 'edit'])->name('user-types.edit');
+    Route::put('/user-types/{id}', [UserTypeController::class, 'update'])->name('user-types.update');
+    Route::delete('/user-types/{id}', [UserTypeController::class, 'destroy'])->name('user-types.destroy');
+});
