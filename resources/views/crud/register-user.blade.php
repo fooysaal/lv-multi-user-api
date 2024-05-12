@@ -10,7 +10,7 @@
                 <div class="card-header">{{ __('Register User') }}</div>
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('register-user') }}">
+                    <form method="POST" action="{{ route('register-user.store') }}">
                         @csrf
                         <div class="mb-3">
                             <label for="user_type" class="form-label text-light">{{ __('User Type') }}</label>
@@ -50,6 +50,16 @@
                             <label for="username" class="form-label text-light">{{ __('Username') }}</label>
                             <input id="username" type="text" class="form-control @error('username') is-invalid @enderror" name="username" value="{{ old('username') }}">
                             @error('username')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="phone" class="form-label text-light">{{ __('Phone') }}</label>
+                            <input id="phone" type="number" class="form-control @error('phone') is-invalid @enderror" name="phone" value="{{ old('phone') }}">
+                            @error('phone')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>

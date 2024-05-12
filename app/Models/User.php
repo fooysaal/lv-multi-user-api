@@ -59,4 +59,9 @@ class User extends Authenticatable
     {
         return $this->belongsTo(UserType::class);
     }
+
+    public function isAdmin(): bool
+    {
+        return $this->userType->name === 'Admin' || $this->userType->name === 'Developer';
+    }
 }

@@ -3,57 +3,36 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
+use App\Models\UserType;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\UserCreateRequest;
-use Illuminate\Foundation\Auth\RegistersUsers;
 
 class RegisterController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Register Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles the registration of new users as well as their
-    | validation and creation. By default this controller uses a trait to
-    | provide this functionality without requiring any additional code.
-    |
-    */
-
-    use RegistersUsers;
-
-    /**
-     * Where to redirect users after registration.
-     *
-     * @var string
-     */
-    protected $redirectTo = '/home';
-
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    public function index()
     {
-        $this->middleware('guest');
+        $userTypes = UserResource::collection(UserType::all());
+        
+        return view('crud.register-user', compact('userTypes'));
     }
-
+    
     /**
      * Register user by register method.
      */
     
-     public function register(UserCreateRequest $request){
+     public function register(UserCreateRequest $request)
+     {
         $user = new User();
 
-        if($request->user_type_id)
-        {
-            $user->user_type_id = $request->user_type_id;
-        }else{
-            $user->user_type_id = 2;
-        }
-
+        // if($request->user_type_id)
+        // {
+        //     $user->user_type_id = $request->user_type_id;
+        // }else{
+        //     $user->user_type_id = 2;
+        // }
+        $user->user_type_id = $request->user_type_id;
         $user->first_name = $request->first_name;
         $user->last_name = $request->last_name;
         $user->username = $request->username;
