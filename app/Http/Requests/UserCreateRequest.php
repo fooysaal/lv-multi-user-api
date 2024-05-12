@@ -24,7 +24,7 @@ class UserCreateRequest extends FormRequest
         return [
             'user_type_id' => 'integer|exists:user_types,id',
             'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
+            'last_name' => 'nullable|string|max:255',
             'username' => 'required|string|max:255|unique:users,username',
             'phone' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email',
