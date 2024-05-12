@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\UserTypeController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -11,15 +12,15 @@ Route::get('/', function () {
 
 Auth::routes();
 
-// disable registration
-Auth::routes(['register' => false]);
-
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-Route::get('/profile', [HomeController::class, 'profile'])->name('profile');
+Route::get('/profile', [HomeController::class, 'profile'])->name('profile')->middleware('auth');
+Route::put('/profile', [HomeController::class, 'updateProfile'])->name('profile.update')->middleware('auth');
+Route::delete('/profile', [HomeController::class, 'destroyProfile'])->name('profile.destroy')->middleware('auth');
 
-Route::group(['middleware' => 'auth'], function () {
-    Route::get('/register-user', [HomeController::class, 'registerUser'])->name('register-user');
+Route::group(['middleware' => 'admin'], function () {
+    Route::get('/register-user', [RegisterController::class, 'index'])->name('register-user');
+    Route::post('/register-user', [RegisterController::class, 'register'])->name('register-user.store');
 
     Route::get('/user-types', [UserTypeController::class, 'index'])->name('user-types');
     Route::get('/user-types/create', [UserTypeController::class, 'create'])->name('user-types.create');
