@@ -38,7 +38,7 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('home') }}">{{ __('Home') }}</a>
                         </li>
-                    @if(Auth::user()->user_type_id == 1)
+                    @if(Auth::check() && Auth::user()->isAdmin())
                         <li class="nav-item">
                             {{-- register user --}}
                             <a class="nav-link" href="{{ route('register-user') }}">{{ __('Register User') }}</a>
