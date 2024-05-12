@@ -13,6 +13,7 @@
                 <div class="card-body">
                     <form method="POST" action="{{ route('user-types.update', $userType->id) }}">
                         @csrf
+                        @method('PUT')
                         <div class="mb-3">
                             <label for="name" class="form-label text-light">{{ __('Name') }}</label>
                             <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name', $userType->name) }}" autofocus>
