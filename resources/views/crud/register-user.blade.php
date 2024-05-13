@@ -7,19 +7,19 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card bg-dark">
-                <div class="card-header">{{ __('Register User') }}</div>
+                <div class="card-header text-light text-center">{{ __('Register User') }}</div>
 
                 <div class="card-body">
                     <form method="POST" action="{{ route('register-user.store') }}">
                         @csrf
                         <div class="mb-3">
-                            <label for="user_type" class="form-label text-light">{{ __('User Type') }}</label>
-                            <select id="user_type" class="form-select @error('user_type') is-invalid @enderror" name="user_type">
+                            <label for="user_type_id" class="form-label text-light">{{ __('User Type') }}</label>
+                            <select id="user_type_id" class="form-select @error('user_type_id') is-invalid @enderror" name="user_type_id">
                                 @foreach ($userTypes as $userType)
                                     <option value="{{ $userType->id }}">{{ $userType->name }}</option>
                                 @endforeach
                             </select>
-                            @error('user_type')
+                            @error('user_type_id')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
