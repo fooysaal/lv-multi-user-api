@@ -17,13 +17,13 @@ class AuthController extends Controller
     {
         $user = new User();
 
-        if($request->user_type_id)
-        {
-            $user->user_type_id = $request->user_type_id;
-        }else{
-            $user->user_type_id = 2;
-        }
-
+        // if($request->user_type_id)
+        // {
+        //     $user->user_type_id = $request->user_type_id;
+        // }else{
+        //     $user->user_type_id = 2;
+        // }
+        $user->user_type_id = $request->user_type_id;
         $user->first_name = $request->first_name;
         $user->last_name = $request->last_name;
         $user->username = $request->username;
@@ -33,11 +33,11 @@ class AuthController extends Controller
 
         $user->save();
         
-        $token = $user->createToken('auth_token')->plainTextToken;
+        // $token = $user->createToken('auth_token')->plainTextToken;
         
         return response()->json([
-            'access_token' => $token,
-            'token_type' => 'Bearer',
+            // 'access_token' => $token,
+            // 'token_type' => 'Bearer',
             'message' => 'User registered successfully',
         ]);
     }

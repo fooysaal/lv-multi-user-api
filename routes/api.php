@@ -8,14 +8,13 @@ use App\Http\Controllers\Api\Auth\AuthController;
 //     return $request->user();
 // })->middleware('auth:sanctum');
 
-Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     
     //route to add user types
-    Route::group(['middleware' => 'admin'], function () {
+    Route::middleware(['admin'])->group(function () {
         Route::get('/user-types', [UserTypeController::class, 'index']);
         Route::post('/user-types', [UserTypeController::class, 'store']);
         Route::get('/user-types/{id}', [UserTypeController::class, 'show']);
@@ -25,7 +24,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::delete('/user-types/{id}/force-delete', [UserTypeController::class, 'forceDelete']);    
         
         //route to add user by admin
-        Route::post('/create-user', [AuthController::class, 'register']);
+        Route::post('/register-user', [AuthController::class, 'register']);
     });
 
     //route to show profile and update profile
