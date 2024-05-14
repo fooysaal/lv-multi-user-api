@@ -6,7 +6,9 @@ use App\Models\User;
 use App\Models\UserType;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Events\Registered;
 use App\Http\Requests\UserCreateRequest;
 
 class RegisterController extends Controller
@@ -15,7 +17,7 @@ class RegisterController extends Controller
     {
         $userTypes = UserResource::collection(UserType::all());
         
-        return view('crud.register-user', compact('userTypes'));
+        return view('auth.register-user', compact('userTypes'));
     }
     
     /**
@@ -39,9 +41,12 @@ class RegisterController extends Controller
         $user->phone = $request->phone;
         $user->email = $request->email;
         $user->password = Hash::make($request->password);
+        $user->created_by = Auth::user()->username;
 
         $user->save();
+
+        // event(new Registered($user));
         
-        return redirect()->route('home')->with('success', 'User registered successfully');
+        return redirect()->route('home')->with('status', 'User registered successfully');
      }
 }
