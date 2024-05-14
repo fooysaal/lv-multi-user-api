@@ -13,16 +13,18 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('user_type_id')->unsigned()->foreign()->references('id')->on('user_types');
+            $table->integer('user_type_id')->unsigned()->foreign()->references('id')->on('user_types');
             $table->string('first_name');
             $table->string('last_name')->nullable();
             $table->string('username')->unique();
             $table->string('phone')->unique();
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
+            $table->timestamp('email_verified_at');
             $table->string('password');
+            $table->string('created_by')->nullable();
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

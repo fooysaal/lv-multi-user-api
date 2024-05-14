@@ -19,6 +19,11 @@ class UserTypeSeeder extends Seeder
         ]);
 
         UserType::create([
+            'name' => 'Developer',
+            'description' => 'This user type has all the permissions',
+        ]);
+
+        UserType::create([
             'name' => 'User',
             'description' => 'This user type has limited permissions',
         ]);
