@@ -34,14 +34,6 @@
                             @enderror
                         </div>
 
-                        <div class="mb-3">
-                            <label for="is_active" class="form-label text-light">{{ __('Status') }}</label>
-                            <select id="is_active" class="form-select" name="is_active">
-                                <option value="1">Active</option>
-                                <option value="0">Inactive</option>
-                            </select>
-                        </div>
-
                         <button type="submit" class="btn btn-primary">{{ __('Update') }}</button>
                     </form>
                 </div>

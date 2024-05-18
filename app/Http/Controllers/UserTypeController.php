@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\UserType;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserTypeResource;
 use App\Http\Requests\UserTypeCreateRequest;
@@ -65,17 +66,25 @@ class UserTypeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UserTypeUpdateRequest $request, $id)
+    public function update(Request $request, $id)
     {
-        $userType = UserType::findorFail($id);
+        $userType = UserType::findOrFail($id);
 
+        if ($request->has('is_active') && $request->get('is_active') == 'changeStatus') {
+            $userType->is_active = !$userType->is_active;
+            $userType->save();
+
+            return redirect()->route('user-types')
+                ->with('success', 'User Type status changed successfully');
+        }
+
+        // For other update logic
         $userType->name = $request->name;
         $userType->description = $request->description;
-        $userType->is_active = $request->is_active;
+        $userType->save();
 
-        $userType->update();
-
-        return redirect()->route('user-types')->with('success', 'User Type updated successfully');
+        return redirect()->route('user-types')
+            ->with('success', 'User Type updated successfully');
     }
 
     /**
@@ -91,6 +100,16 @@ class UserTypeController extends Controller
     }
 
     /**
+     * Display a listing of the thrashed resource.
+     */
+    public function trashed()
+    {
+        $userTypes = UserType::onlyTrashed()->get();
+
+        return view('crud.userType-index', compact('userTypes'));
+    }
+
+    /**
      * Restore the specified resource from storage.
      */
     public function restore($id)
@@ -98,11 +117,7 @@ class UserTypeController extends Controller
         $userType = UserType::withTrashed()->findorFail($id);
         $userType->restore();
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'User Type restored successfully',
-            'data' => new UserTypeResource($userType),
-        ]);
+        return redirect()->route('user-types')->with('success', 'User Type restored successfully');
     }
 
     /**
@@ -113,9 +128,6 @@ class UserTypeController extends Controller
         $userType = UserType::withTrashed()->findorFail($id);
         $userType->forceDelete();
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'User Type deleted permanently',
-        ]);
+        return redirect()->route('user-types.trashed')->with('success', 'User Type deleted permanently');
     }
 }

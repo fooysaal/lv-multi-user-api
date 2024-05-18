@@ -8,15 +8,20 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="d-flex justify-content-between align-items-start mb-2">
-                <a href="{{ route('user-types.create') }}" class="btn btn-primary">Create User Type</a>
+                <select class="form-select" style="width: 20%" onchange="window.location.href = this.value;">
+                    <option value="{{ route('user-types') }}" {{ request()->is('user-types') ? 'selected' : '' }}>All User Types</option>
+                    <option value="{{ route('user-types.trashed') }}" {{ request()->is('user-types/trashed') ? 'selected' : '' }}>Trashed User Types</option>
+                </select>
+                
+                <a href="{{ route('user-types.create') }}" class="btn btn-primary ms-auto">Create User Type</a>
+            </div>
             
-                @if (Session::has('success'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        {{ Session::get('success') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-            </div>            
+            @if (Session::has('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ Session::get('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif      
 
             {{-- display all user types --}}
             <div class="card bg-dark">
@@ -29,27 +34,92 @@
                                 <th scope="col">ID</th>
                                 <th scope="col">Name</th>
                                 <th scope="col">Description</th>
+                                <th scope="col">Status</th>
                                 <th scope="col">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($userTypes as $userType)
+                            @forelse ($userTypes as $userType)
                                 <tr>
                                     <td>
                                         {{ $loop->iteration }}
                                     </td>
                                     <td>{{ $userType->name }}</td>
                                     <td>{{ $userType->description }}</td>
+                                    {{-- add a toggle for is_active by toggling it will change active or inactive --}}
+                                    
                                     <td>
-                                        <a href="{{ route('user-types.edit', $userType->id) }}" class="btn btn-primary">Edit</a>
-                                        <form action="{{ route('user-types.destroy', $userType->id) }}" method="POST" class="d-inline">
+                                        @if ($userType->is_active == 1 && $userType->deleted_at == null)
+                                            <form action="{{ route('user-types.update', $userType->id) }}" method="POST">
+                                                @csrf
+                                                @method('PUT')
+                                                <input type="hidden" name="is_active" value="changeStatus" />
+                                                <button type="submit" class="btn btn-success btn-sm">Active</button>
+                                            </form>
+                                        @else
+                                            <form action="{{ route('user-types.update', $userType->id) }}" method="POST">
+                                                @csrf
+                                                @method('PUT')
+                                                <input type="hidden" name="is_active" value="changeStatus" />
+                                                <button type="submit" class="btn btn-danger btn-sm" @if ($userType->deleted_at != null) disabled @endif>Inactive</button>
+                                            </form>
+                                        @endif
+                                    </td>                                    
+
+                                    <td>
+                                        @if ($userType->deleted_at == null)
+                                        <form action="{{ route('user-types.destroy', $userType->id) }}" method="POST">
+                                            <a class="btn btn-primary btn-sm" href="{{ route('user-types.edit', $userType->id) }}">Edit</a>
+                        
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                            
                                         </form>
+                                        @else
+                                        <form action="{{ route('user-types.restore', $userType->id) }}" method="POST" class="d-inline-block">
+                                            @csrf
+                                            @method('PUT')
+                        
+                                            <button type="submit" class="btn btn-success btn-sm">Restore</button>
+                                        </form>
+                                        <form action="{{ route('user-types.forceDelete', $userType->id) }}" method="POST" class="d-inline-block">
+                                            @csrf
+                                            @method('DELETE')
+                                            
+                                            <!-- Button trigger modal -->
+                                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#pdeleteModal{{ $userType->id }}">
+                                                Delete
+                                            </button>
+                        
+                                            <!-- Modal -->
+                                            <div class="modal top fade" id="pdeleteModal{{ $userType->id }}" tabindex="-1" aria-labelledby="pdeleteModalLabel{{ $userType->id }}" aria-hidden="true" data-mdb-backdrop="true" data-mdb-keyboard="true">
+                                                <div class="modal-dialog modal-sm  modal-dialog-centered">
+                                                    <div class="modal-content bg-dark">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="pdeleteModalLabel{{ $userType->id }}">Confirm Delete</h5>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            Are you sure you want to delete this userType?
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                                Close
+                                                            </button>
+                                                            <button type="submit" class="btn btn-danger">Confirm</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        @endif
                                     </td>
                                 </tr>
-                            @endforeach
+                            @empty
+                                <tr class="text-center">
+                                    <td colspan="7">No User Types found.</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
