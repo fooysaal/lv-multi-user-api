@@ -46,8 +46,6 @@
                                     </td>
                                     <td>{{ $userType->name }}</td>
                                     <td>{{ $userType->description }}</td>
-                                    {{-- add a toggle for is_active by toggling it will change active or inactive --}}
-                                    
                                     <td>
                                         @if ($userType->is_active == 1 && $userType->deleted_at == null)
                                             <form action="{{ route('user-types.update', $userType->id) }}" method="POST">
@@ -65,53 +63,73 @@
                                             </form>
                                         @endif
                                     </td>                                    
-
                                     <td>
                                         @if ($userType->deleted_at == null)
-                                        <form action="{{ route('user-types.destroy', $userType->id) }}" method="POST">
-                                            <a class="btn btn-primary btn-sm" href="{{ route('user-types.edit', $userType->id) }}">Edit</a>
-                        
+                                            <a href="{{ route('user-types.edit', $userType->id) }}" class="btn btn-primary btn-sm">Edit</a>
+                
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                            
-                                        </form>
-                                        @else
-                                        <form action="{{ route('user-types.restore', $userType->id) }}" method="POST" class="d-inline-block">
-                                            @csrf
-                                            @method('PUT')
-                        
-                                            <button type="submit" class="btn btn-success btn-sm">Restore</button>
-                                        </form>
-                                        <form action="{{ route('user-types.forceDelete', $userType->id) }}" method="POST" class="d-inline-block">
-                                            @csrf
-                                            @method('DELETE')
-                                            
-                                            <!-- Button trigger modal -->
-                                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#pdeleteModal{{ $userType->id }}">
-                                                Delete
-                                            </button>
-                        
+                                            @if ($userType->name !== 'Admin' && $userType->name !== 'Developer')
+                                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#pdeleteModal{{ $userType->id }}">Delete</button>
+                                            @else
+                                                <button type="button" class="btn btn-secondary btn-sm" disabled>Delete</button>
+                                            @endif
+                
                                             <!-- Modal -->
                                             <div class="modal top fade" id="pdeleteModal{{ $userType->id }}" tabindex="-1" aria-labelledby="pdeleteModalLabel{{ $userType->id }}" aria-hidden="true" data-mdb-backdrop="true" data-mdb-keyboard="true">
-                                                <div class="modal-dialog modal-sm  modal-dialog-centered">
+                                                <div class="modal-dialog modal-sm modal-dialog-centered">
                                                     <div class="modal-content bg-dark">
                                                         <div class="modal-header">
                                                             <h5 class="modal-title" id="pdeleteModalLabel{{ $userType->id }}">Confirm Delete</h5>
                                                         </div>
                                                         <div class="modal-body">
-                                                            Are you sure you want to delete this userType?
+                                                            Are you sure you want to delete this User Type?
                                                         </div>
                                                         <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                                                Close
-                                                            </button>
-                                                            <button type="submit" class="btn btn-danger">Confirm</button>
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                            <form action="{{ route('user-types.destroy', $userType->id) }}" method="POST">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="btn btn-danger">Confirm</button>
+                                                            </form>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </form>
+                                        @else
+                                            <form action="{{ route('user-types.restore', $userType->id) }}" method="POST" class="d-inline-block">
+                                                @csrf
+                                                @method('PUT')
+                                                <button type="submit" class="btn btn-success btn-sm">Restore</button>
+                                            </form>
+                                            <form action="{{ route('user-types.forceDelete', $userType->id) }}" method="POST" class="d-inline-block">
+                                                @csrf
+                                                @method('DELETE')
+                
+                                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#pdeleteModal{{ $userType->id }}">Delete</button>
+                
+                                                <!-- Modal -->
+                                                <div class="modal top fade" id="pdeleteModal{{ $userType->id }}" tabindex="-1" aria-labelledby="pdeleteModalLabel{{ $userType->id }}" aria-hidden="true" data-mdb-backdrop="true" data-mdb-keyboard="true">
+                                                    <div class="modal-dialog modal-sm modal-dialog-centered">
+                                                        <div class="modal-content bg-danger">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="pdeleteModalLabel{{ $userType->id }}">Permanent Delete</h5>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                Are you sure you want to permanently delete this User Type?
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                <form action="{{ route('user-types.forceDelete', $userType->id) }}" method="POST">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button type="submit" class="btn btn-dark">Confirm</button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
                                         @endif
                                     </td>
                                 </tr>
