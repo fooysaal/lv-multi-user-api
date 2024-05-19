@@ -48,28 +48,46 @@ class HomeController extends Controller
         $user->phone = $request->phone;
         $user->email = $request->email;
 
-        if($request->password)
-        {
-            $user->password = Hash::make($request->password);
-        }
-
         $user->update();
 
         return redirect()->route('profile')->with('success', 'Profile updated successfully');
     }
 
+    public function updatePassword(Request $request)
+    {
+        $user = User::find(auth()->user()->id);
+        $request->validate([
+            'current_password' => 'required',
+            'password' => 'required|confirmed'
+        ]);
+
+        // check if the old password matches
+        if(!Hash::check($request->current_password, $user->password))
+        {
+            return redirect()->route('profile')->with('success', 'Old password does not match');
+        }
+
+        $user->password = Hash::make($request->password);
+        $user->update();
+
+        return redirect()->route('profile')->with('success', 'Password updated successfully');
+    }
+
     public function destroyProfile(Request $request)
     {
         $user = User::find(auth()->user()->id);
+        $request->validate([
+            'account_delete_password' => 'required'
+        ]);
 
         // delete user if matches the password
-        if(!Hash::check($request->password, $user->password))
+        if(!Hash::check($request->account_delete_password, $user->password))
         {
             return redirect()->route('profile')->with('success', 'Password does not match');
         }
 
         $user->delete();
 
-        return redirect()->route('login')->with('success', 'Profile deleted successfully');
+        return redirect()->route('login');
     }
 }
