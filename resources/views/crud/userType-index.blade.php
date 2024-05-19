@@ -8,7 +8,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="d-flex justify-content-between align-items-start mb-2">
-                <select class="form-select" style="width: 20%" onchange="window.location.href = this.value;">
+                <select class="form-select bg-dark text-light" style="width: 20%" onchange="window.location.href = this.value;">
                     <option value="{{ route('user-types') }}" {{ request()->is('user-types') ? 'selected' : '' }}>All User Types</option>
                     <option value="{{ route('user-types.trashed') }}" {{ request()->is('user-types/trashed') ? 'selected' : '' }}>Trashed User Types</option>
                 </select>
