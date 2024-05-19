@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccountController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -40,12 +41,17 @@ Route::post('/email/verification-notification', function (Request $request) {
 // Manage profile routes
 Route::get('/profile', [HomeController::class, 'profile'])->name('profile')->middleware('auth');
 Route::put('/profile', [HomeController::class, 'updateProfile'])->name('profile.update')->middleware('auth');
-Route::delete('/profile', [HomeController::class, 'destroyProfile'])->name('profile.destroy')->middleware('auth');
+Route::put('/profile/password', [HomeController::class, 'updatePassword'])->name('profile.password')->middleware('auth');
+Route::delete('/profile', [AccountController::class, 'destroyProfile'])->name('profile.destroy')->middleware('auth');
 
 // Admin routes
 Route::middleware(['admin'])->group(function () {
     Route::get('/register-user', [RegisterController::class, 'index'])->name('register-user');
     Route::post('/register-user', [RegisterController::class, 'register'])->name('register-user.store');
+
+    Route::get('users/trashed', [AccountController::class, 'trashedUsers'])->name('users.trashed');
+    Route::put('users/{id}/restore', [AccountController::class, 'restoreUsers'])->name('users.restore');
+    Route::delete('users/{id}/delete', [AccountController::class, 'forceDeleteUser'])->name('users.forceDelete');
 
     Route::get('/user-types', [UserTypeController::class, 'index'])->name('user-types');
     Route::get('/user-types/create', [UserTypeController::class, 'create'])->name('user-types.create');
@@ -53,4 +59,7 @@ Route::middleware(['admin'])->group(function () {
     Route::get('/user-types/{id}/edit', [UserTypeController::class, 'edit'])->name('user-types.edit');
     Route::put('/user-types/{id}', [UserTypeController::class, 'update'])->name('user-types.update');
     Route::delete('/user-types/{id}', [UserTypeController::class, 'destroy'])->name('user-types.destroy');
+    Route::get('/user-types/trashed', [UserTypeController::class, 'trashed'])->name('user-types.trashed');
+    Route::put('/user-types/{id}/restore', [UserTypeController::class, 'restore'])->name('user-types.restore');
+    Route::delete('/user-types/{id}/delete', [UserTypeController::class, 'forceDelete'])->name('user-types.forceDelete');
 });
