@@ -9,9 +9,9 @@ use App\Http\Controllers\UserTypeController;
 use App\Http\Controllers\Auth\RegisterController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/account-not-active', function () {
+    return view('account-not-active');
+})->name('account-not-active');
 
 Auth::routes(['verify' => true]);
 
@@ -19,7 +19,11 @@ Route::get('/register', function () {
     return redirect()->route('login');
 });
 
-Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::get('/', function () {
+    return redirect()->route('login');
+});
+
+Route::get('/home', [HomeController::class, 'index'])->name('home')->middleware('auth', 'verified', 'active');
 
 // Email verification routes
 Route::get('/email/verify', function () {
@@ -39,17 +43,18 @@ Route::post('/email/verification-notification', function (Request $request) {
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
 // Manage profile routes
-Route::get('/profile', [HomeController::class, 'profile'])->name('profile')->middleware('auth');
-Route::put('/profile', [HomeController::class, 'updateProfile'])->name('profile.update')->middleware('auth');
-Route::put('/profile/password', [HomeController::class, 'updatePassword'])->name('profile.password')->middleware('auth');
-Route::delete('/profile', [AccountController::class, 'destroyProfile'])->name('profile.destroy')->middleware('auth');
+Route::middleware('verified', 'active')->group(function() {
+    Route::get('/profile', [HomeController::class, 'profile'])->name('profile')->middleware('auth');
+    Route::put('/profile', [HomeController::class, 'updateProfile'])->name('profile.update')->middleware('auth');
+    Route::put('/profile/password', [HomeController::class, 'updatePassword'])->name('profile.password')->middleware('auth');
+    Route::delete('/profile', [AccountController::class, 'destroyProfile'])->name('profile.destroy')->middleware('auth');
+});
 
 // Admin routes
-Route::middleware(['admin'])->group(function () {
+Route::middleware(['admin', 'active'])->group(function () {
     Route::get('/register-user', [RegisterController::class, 'index'])->name('register-user');
     Route::post('/register-user', [RegisterController::class, 'register'])->name('register-user.store');
 
-    Route::get('users/trashed', [AccountController::class, 'trashedUsers'])->name('users.trashed');
     Route::put('users/{id}/restore', [AccountController::class, 'restoreUsers'])->name('users.restore');
     Route::delete('users/{id}/delete', [AccountController::class, 'forceDeleteUser'])->name('users.forceDelete');
 
