@@ -7,7 +7,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card bg-dark">
-                <div class="card-header text-light text-center">{{ __('Register User') }}</div>
+                <div class="card-header text-light text-center">{{ __('Create User') }}</div>
 
                 <div class="card-body">
                     <form method="POST" action="{{ route('register-user.store') }}">

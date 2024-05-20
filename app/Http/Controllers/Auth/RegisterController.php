@@ -15,7 +15,7 @@ class RegisterController extends Controller
 {
     public function index()
     {
-        $userTypes = UserResource::collection(UserType::all());
+        $userTypes = UserResource::collection(UserType::where('is_active', 1)->get());
         
         return view('auth.register-user', compact('userTypes'));
     }
@@ -45,8 +45,8 @@ class RegisterController extends Controller
 
         $user->save();
 
-        // event(new Registered($user));
+        event(new Registered($user));
         
-        return redirect()->route('home')->with('status', 'User registered successfully');
+        return redirect()->route('home')->with('status', 'User created successfully');
      }
 }
