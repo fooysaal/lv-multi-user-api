@@ -26,19 +26,19 @@ class AccountController extends Controller
         return redirect()->route('login');
     }
 
-    public function trashedUsers()
-    {
-        $users = User::onlyTrashed()->get();
+    // public function trashedUsers()
+    // {
+    //     $users = User::onlyTrashed()->get();
 
-        return view('home', compact('users'));
-    }
+    //     return view('home', compact('users'));
+    // }
 
     public function restoreUsers($id)
     {
         $user = User::withTrashed()->findorFail($id);
         $user->restore();
 
-        return redirect()->route('home')->with('success', 'User profile restored successfully');
+        return redirect()->route('home')->with('status', 'User profile restored successfully');
     }
 
     public function forceDeleteUser($id)
@@ -46,6 +46,6 @@ class AccountController extends Controller
         $user = User::withTrashed()->findorFail($id);
         $user->forceDelete();
 
-        return redirect()->route('users.trashed')->with('success', 'User profile deleted permanently');
+        return redirect()->route('users.trashed')->with('status', 'User profile deleted permanently');
     }
 }

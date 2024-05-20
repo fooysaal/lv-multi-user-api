@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\UserType;
 use Illuminate\Http\Request;
 use App\Http\Resources\UserResource;
+use App\Http\Resources\UserTypeResource;
 use Illuminate\Support\Facades\Hash;
 
 class HomeController extends Controller
@@ -28,9 +29,12 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $users = UserResource::collection(User::all());
+        // return users with trashed users
+        $viewBag['users'] = UserResource::collection(User::withTrashed()->get());
+
+        $viewBag['userTypes'] = UserTypeResource::collection(UserType::where('is_active', 1)->get());
         
-        return view('home', compact('users'));
+        return view('home', compact('viewBag'));
     }
 
     public function profile()
