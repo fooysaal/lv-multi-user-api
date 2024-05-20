@@ -79,6 +79,10 @@ class UserTypeController extends Controller
         }
 
         // For other update logic
+        $request->validate([
+            'name' => 'required|unique:user_types,name,' . $id,
+        ]);
+
         $userType->name = $request->name;
         $userType->description = $request->description;
         $userType->save();

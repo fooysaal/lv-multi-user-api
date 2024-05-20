@@ -25,12 +25,7 @@
 
                         <div class="mb-3">
                             <label for="description" class="form-label text-light">{{ __('Description') }}</label>
-                            <input id="description" type="text" class="form-control @error('description') is-invalid @enderror" name="description" value="{{ old('description') }}" autofocus>
-                            @error('description')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
+                            <input id="description" type="text" class="form-control" name="description" value="{{ old('description') }}" autofocus>
                         </div>
 
                         <div class="mb-3">

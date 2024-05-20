@@ -23,7 +23,6 @@ class UserTypeCreateRequest extends FormRequest
     {
         return [
             "name" => "required|string|unique:user_types,name",
-            "description" => "string",
             "is_active" => "numeric|in:0,1",
         ];
     }

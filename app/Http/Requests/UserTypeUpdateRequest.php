@@ -23,8 +23,6 @@ class UserTypeUpdateRequest extends FormRequest
     {
         return [
             "name" => "required|unique:user_types,name," . $this->id,
-            "description" => "string",
-            "is_active" => "numeric|in:0,1",
         ];
     }
 }
