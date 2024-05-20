@@ -65,4 +65,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->userType->name === 'Admin' || $this->userType->name === 'Developer';
     }
+
+    public function isActive(): bool
+    {
+        return $this->userType->is_active === 1;
+    }
 }
