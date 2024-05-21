@@ -40,6 +40,7 @@ Route::middleware('auth', 'verified', 'active')->group(function() {
 Route::middleware(['admin', 'active'])->group(function () {
     Route::get('/register-user', [RegisterController::class, 'index'])->name('register-user');
     Route::post('/register-user', [RegisterController::class, 'register'])->name('register-user.store');
+    Route::put('/update/user-type/{id}', [AccountController::class, 'UpdateUserType'])->name('user-type.update');
 
     Route::put('users/{id}/restore', [AccountController::class, 'restoreUsers'])->name('users.restore');
     Route::delete('users/{id}/delete', [AccountController::class, 'forceDeleteUser'])->name('users.forceDelete');
