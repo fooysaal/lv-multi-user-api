@@ -89,7 +89,7 @@
                                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
                                                         <div class="modal-body text-light">
-                                                            <form action="" method="POST">
+                                                            <form action="{{ route('user-type.update', $user->id) }}" method="POST">
                                                                 @csrf
                                                                 @method('PUT')
                                                                 <div class="mb-3">
@@ -124,9 +124,9 @@
                                                 <!-- Permanent Delete Modal -->
                                                 <div class="modal top fade" id="pdeleteModal{{ $user->id }}" tabindex="-1" aria-labelledby="pdeleteModalLabel{{ $user->id }}" aria-hidden="true" data-mdb-backdrop="true" data-mdb-keyboard="true">
                                                     <div class="modal-dialog modal-sm modal-dialog-centered">
-                                                        <div class="modal-content bg-danger">
+                                                        <div class="modal-content bg-danger text-light">
                                                             <div class="modal-header">
-                                                                <h5 class="modal-title" id="pdeleteModalLabel{{ $user->id }}">Permanent Delete</h5>
+                                                                <h4 class="modal-title" id="pdeleteModalLabel{{ $user->id }}">Permanent Delete</h4>
                                                             </div>
                                                             <div class="modal-body">
                                                                 Are you sure you want to permanently delete this User?

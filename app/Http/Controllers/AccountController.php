@@ -8,6 +8,17 @@ use Illuminate\Support\Facades\Hash;
 
 class AccountController extends Controller
 {
+    public function UpdateUserType(Request $request, $id)
+    {
+        $user = User::find($id);
+
+        $user->user_type_id = $request->user_type_id;
+
+        $user->update();
+
+        return redirect()->route('home')->with('status', 'User type updated successfully');
+    }
+
     public function destroyProfile(Request $request)
     {
         $user = User::find(auth()->user()->id);
