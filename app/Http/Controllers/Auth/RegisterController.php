@@ -28,12 +28,6 @@ class RegisterController extends Controller
      {
         $user = new User();
 
-        // if($request->user_type_id)
-        // {
-        //     $user->user_type_id = $request->user_type_id;
-        // }else{
-        //     $user->user_type_id = 2;
-        // }
         $user->user_type_id = $request->user_type_id;
         $user->first_name = $request->first_name;
         $user->last_name = $request->last_name;
@@ -43,9 +37,13 @@ class RegisterController extends Controller
         $user->password = Hash::make($request->password);
         $user->created_by = Auth::user()->username;
 
+        $user->email_verified_at = null;
+
         $user->save();
 
         event(new Registered($user));
+
+        $user->sendOtp();
         
         return redirect()->route('home')->with('status', 'User created successfully');
      }

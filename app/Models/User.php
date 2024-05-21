@@ -2,15 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Mail\OtpMail;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable
 {
     use HasFactory, Notifiable, HasApiTokens, SoftDeletes;
 
@@ -26,6 +29,9 @@ class User extends Authenticatable implements MustVerifyEmail
         'phone',
         'email',
         'password',
+        'otp',
+        'otp_expiry',
+        'email_verified_at',
     ];
 
     /**
@@ -59,6 +65,29 @@ class User extends Authenticatable implements MustVerifyEmail
     public function userType(): BelongsTo
     {
         return $this->belongsTo(UserType::class);
+    }
+
+    /**
+     * Send OTP to the user's email.
+     *
+     * @return void
+     */
+    public function sendOtp()
+    {
+        $this->generateOtp();
+        Mail::to($this->email)->send(new \App\Mail\OtpMail($this->otp));
+    }
+
+    /**
+     * Generate a new OTP and save it to the user.
+     *
+     * @return void
+     */
+    public function generateOtp()
+    {
+        $this->otp = rand(100000, 999999);
+        $this->otp_expiry = now()->addMinutes(10);
+        $this->save();
     }
 
     public function isAdmin(): bool

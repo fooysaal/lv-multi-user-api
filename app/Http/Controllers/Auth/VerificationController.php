@@ -2,40 +2,50 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\VerifiesEmails;
+use Illuminate\Support\Facades\Mail;
+use Carbon\Carbon;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 class VerificationController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Email Verification Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller is responsible for handling email verification for any
-    | user that recently registered with the application. Emails may also
-    | be re-sent if the user didn't receive the original email message.
-    |
-    */
-
-    use VerifiesEmails;
-
-    /**
-     * Where to redirect users after verification.
-     *
-     * @var string
-     */
-    protected $redirectTo = '/home';
-
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    public function show()
     {
-        $this->middleware('auth');
-        $this->middleware('signed')->only('verify');
-        $this->middleware('throttle:6,1')->only('verify', 'resend');
+        return view('auth.verify');
+    }
+
+    public function verify(Request $request)
+    {
+        $user = Auth::user();
+        
+        $request->validate([
+            'otp' => 'required|numeric'
+        ]);
+
+        if($user->otp !== $request->otp) {
+            return back()->with('error', 'Invalid OTP');
+        }
+
+        if(Carbon::now()->greaterThan($user->otp_expiry)) {
+            return back()->with('error', 'OTP expired');
+        }
+
+        $user->email_verified_at = Carbon::now();
+        $user->otp = null;
+        $user->otp_expiry = null;
+        $user->save();
+
+        return redirect()->route('home')->with('status', 'Email verified successfully');
+    }
+
+    public function resend()
+    {
+        $user = Auth::user();
+
+        $user->sendOtp();
+
+        return back()->with('status', 'OTP sent successfully');
     }
 }

@@ -46,6 +46,6 @@ class AccountController extends Controller
         $user = User::withTrashed()->findorFail($id);
         $user->forceDelete();
 
-        return redirect()->route('users.trashed')->with('status', 'User profile deleted permanently');
+        return redirect()->route('home')->with('status', 'User profile deleted permanently');
     }
 }

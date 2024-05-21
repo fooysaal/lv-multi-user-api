@@ -19,7 +19,7 @@ class UserSeeder extends Seeder
             'first_name' => 'Admin',
             'last_name' => 'User',
             'username' => 'admin',
-            'phone' => '1234567890', // Add a phone number here
+            'phone' => '12345678901', // Add a phone number here
             'email' => 'admin@mail.com',
             'password' => Hash::make('password'),
             'email_verified_at' => now(),

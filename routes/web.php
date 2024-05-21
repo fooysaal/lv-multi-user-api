@@ -1,19 +1,18 @@
 <?php
 
-use App\Http\Controllers\AccountController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\UserTypeController;
 use App\Http\Controllers\Auth\RegisterController;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use App\Http\Controllers\Auth\VerificationController;
 
 Route::get('/account-not-active', function () {
     return view('account-not-active');
 })->name('account-not-active');
 
-Auth::routes(['verify' => true]);
+Auth::routes(['verify' => false]);
 
 Route::get('/register', function () {
     return redirect()->route('login');
@@ -25,29 +24,16 @@ Route::get('/', function () {
 
 Route::get('/home', [HomeController::class, 'index'])->name('home')->middleware('auth', 'verified', 'active');
 
-// Email verification routes
-Route::get('/email/verify', function () {
-    return view('auth.verify-email');
-})->middleware('auth')->name('verification.notice');
-
-Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-    $request->fulfill();
- 
-    return redirect('/home');
-})->middleware(['auth', 'signed'])->name('verification.verify');
-
-Route::post('/email/verification-notification', function (Request $request) {
-    $request->user()->sendEmailVerificationNotification();
- 
-    return back()->with('message', 'Verification link sent!');
-})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+Route::get('/verify-email', [VerificationController::class, 'show'])->name('verification.notice')->middleware('auth');
+Route::post('/verify-email', [VerificationController::class, 'verify'])->name('verification.verify')->middleware('auth');
+Route::post('/resend-otp', [VerificationController::class, 'resend'])->name('verification.resend')->middleware('auth');
 
 // Manage profile routes
-Route::middleware('verified', 'active')->group(function() {
-    Route::get('/profile', [HomeController::class, 'profile'])->name('profile')->middleware('auth');
-    Route::put('/profile', [HomeController::class, 'updateProfile'])->name('profile.update')->middleware('auth');
-    Route::put('/profile/password', [HomeController::class, 'updatePassword'])->name('profile.password')->middleware('auth');
-    Route::delete('/profile', [AccountController::class, 'destroyProfile'])->name('profile.destroy')->middleware('auth');
+Route::middleware('auth', 'verified', 'active')->group(function() {
+    Route::get('/profile', [HomeController::class, 'profile'])->name('profile');
+    Route::put('/profile', [HomeController::class, 'updateProfile'])->name('profile.update');
+    Route::put('/profile/password', [HomeController::class, 'updatePassword'])->name('profile.password');
+    Route::delete('/profile', [AccountController::class, 'destroyProfile'])->name('profile.destroy');
 });
 
 // Admin routes
