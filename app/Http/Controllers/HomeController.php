@@ -51,20 +51,25 @@ class HomeController extends Controller
         $user->username = $request->username;
         $user->phone = $request->phone;
         $user->email = $request->email;
+        
+        if($user->isDirty())
+        {
+            $user->update();
 
-        $user->update();
-
-        return redirect()->route('profile')->with('success', 'Profile updated successfully');
+            return redirect()->route('profile')->with('success', 'Profile updated successfully');
+        }
+        return redirect()->route('profile');
     }
 
     public function updatePassword(Request $request)
     {
-        $user = User::find(auth()->user()->id);
         $request->validate([
             'current_password' => 'required',
             'password' => 'required|confirmed'
         ]);
-
+        
+        $user = User::find(auth()->user()->id);
+        
         // check if the old password matches
         if(!Hash::check($request->current_password, $user->password))
         {
