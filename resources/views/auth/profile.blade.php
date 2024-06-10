@@ -189,4 +189,27 @@
     </div>
 </div>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        @if ($errors->any())
+            // Check if there are validation errors and reopen the appropriate modal
+            @if ($errors->has('current_password') || $errors->has('password'))
+                var changePasswordModal = document.getElementById('changePasswordModal');
+                var changePasswordBackdrop = document.querySelector('.modal-backdrop');
+                changePasswordModal.classList.add('show');
+                changePasswordModal.style.display = 'block';
+                changePasswordBackdrop.style.display = 'block';
+            @endif
+
+            @if ($errors->has('account_delete_password'))
+                var deleteAccountModal = document.getElementById('deleteAccountModal');
+                var deleteAccountBackdrop = document.querySelector('.modal-backdrop');
+                deleteAccountModal.classList.add('show');
+                deleteAccountModal.style.display = 'block';
+                deleteAccountBackdrop.style.display = 'block';
+            @endif
+        @endif
+    });
+</script>
+
 @endsection
